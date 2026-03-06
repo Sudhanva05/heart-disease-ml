@@ -1,0 +1,5 @@
+pandas numpy scikit-learn matplotlib seaborn fastapi uvicorn joblibvenv/
+__pycache__/
+*.pkl
+*.pyc
+.DS_Store
