@@ -5,6 +5,7 @@ import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score
 
 
@@ -21,7 +22,7 @@ df = df.apply(pd.to_numeric)
 # Convert target to binary
 df["target"] = df["target"].apply(lambda x: 1 if x > 0 else 0)
 
-# Handle missing values
+# Fill missing values
 df = df.fillna(df.median())
 
 # Split features and target
@@ -33,25 +34,23 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
 
-# Feature scaling
-scaler = StandardScaler()
-
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
+# Build pipeline
+pipeline = Pipeline([
+    ("scaler", StandardScaler()),
+    ("model", KNeighborsClassifier())
+])
 
 # Train model
-model = KNeighborsClassifier()
-
-model.fit(X_train, y_train)
+pipeline.fit(X_train, y_train)
 
 # Evaluate
-y_pred = model.predict(X_test)
+y_pred = pipeline.predict(X_test)
 
 accuracy = accuracy_score(y_test, y_pred)
 
 print("Model Accuracy:", accuracy)
 
-# Save model
-joblib.dump(model, "models/heart_model.pkl")
+# Save pipeline
+joblib.dump(pipeline, "models/heart_model.pkl")
 
-print("Model saved to models/heart_model.pkl")
+print("Pipeline model saved successfully")
